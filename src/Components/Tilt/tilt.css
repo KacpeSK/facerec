@@ -1,0 +1,13 @@
+.tilt {
+  /* position: absolute;
+  top: 40px;
+  left: 40px;*/
+  width: 150px;
+  height: auto;
+  object-fit: cover;
+  object-position: center center;
+  opacity: 1;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.1s;
+}

@@ -5,6 +5,7 @@ import Rank from "./Components/Rank/Rank";
 import ImageLinkForm from "./Components/ImageLinkForm/ImagelinkForm";
 import FaceRecognition from "./Components/FaceRecognition/FaceRecognition";
 import Signin from "./Components/Signin/Sigin";
+import Register from "./Components/Register/Register";
 import ParticlesBg from "particles-bg";
 import "./App.css";
 import globalconfig from "./config";
@@ -48,6 +49,7 @@ function App() {
   const [imageUrl, setImageUrl] = useState("");
   const [box, setBox] = useState([]);
   const [route, setRoute] = useState("signin");
+  const [isSignIn, setIsSignIn] = useState(false);
 
   const calculateFaceLocation = (data) => {
     const clarifaiFace = data.outputs[0].data.regions;
@@ -55,7 +57,6 @@ function App() {
     const width = Number(image.width);
     const height = Number(image.height);
     const newBox = [];
-    console.log(clarifaiFace);
     clarifaiFace.map((element) => {
       newBox.push({
         leftCol: element.region_info.bounding_box.left_col * width,
@@ -69,14 +70,13 @@ function App() {
 
   const onInputChange = (e) => {
     setImageUrl(e.target.value);
+    setBox([]);
   };
 
   const onButtonSubmit = () => {
-    console.log("button clicked");
     fetch("https://api.clarifai.com/v2/models/" + "face-detection" + "/outputs", setupClarifai(imageUrl))
       .then((response) => response.json())
       .then((result) => {
-        console.log(result.outputs[0].data.regions[0].region_info.bounding_box);
         calculateFaceLocation(result);
         /*const regions = result.outputs[0].data.regions;
 
@@ -102,23 +102,50 @@ function App() {
   };
 
   const onRouteChange = (route) => {
+    switch (route) {
+      case "signin":
+        setIsSignIn(false);
+        break;
+      case "register":
+        setIsSignIn(false);
+        break;
+      case "home":
+        setIsSignIn(true);
+        break;
+
+      default:
+        setIsSignIn(false);
+        break;
+    }
     setRoute(route);
+  };
+
+  const renderComponents = (currentRoute) => {
+    switch (currentRoute) {
+      case "signin":
+        return <Signin onRouteChange={onRouteChange} />;
+      case "register":
+        return <Register onRouteChange={onRouteChange} />;
+      case "home":
+        return (
+          <>
+            <Logo />
+            <Rank />
+            <ImageLinkForm onInputChange={onInputChange} onButtonSubmit={onButtonSubmit} />
+            <FaceRecognition box={box} imageUrl={imageUrl} />
+          </>
+        );
+
+      default:
+        return <Signin onRouteChange={onRouteChange} />;
+    }
   };
 
   return (
     <>
-      <Navigation onRouteChange={onRouteChange} />
+      <Navigation onRouteChange={onRouteChange} isSignIn={isSignIn} />
       <ParticlesBg num={100} type="cobweb" bg={true} />
-      {route === "signin" ? (
-        <Signin onRouteChange={onRouteChange} />
-      ) : (
-        <>
-          <Logo />
-          <Rank />
-          <ImageLinkForm onInputChange={onInputChange} onButtonSubmit={onButtonSubmit} />
-          <FaceRecognition box={box} imageUrl={imageUrl} />
-        </>
-      )}
+      {renderComponents(route)}
     </>
   );
 }

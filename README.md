@@ -13,12 +13,11 @@ The main purpose of this app is to:
 Tech stack
 
 Code editor:
-VSCode
+VSCode,
 
 FrontEnd:
-React + vite
-tachyons
+React + vite, tachyons
 
 BackEnd:
-Node.js
+Node.js,
 SQL

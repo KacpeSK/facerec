@@ -1,8 +1,24 @@
-# React + Vite
+FacerecognitionBrain - (WIP)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This app use AI to do face, speach, image rocognition algorith so you can test different model from Clarifai.
 
-Currently, two official plugins are available:
+The main purpose of this app is to:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+> test the AI funcionality
+
+> extract and define posibilities how and where to use it in future projects
+
+> extend the knowlage how can we use AI more efficiently
+
+Tech stack
+
+Code editor:
+VSCode
+
+FrontEnd:
+React + vite
+tachyons
+
+BackEnd:
+Node.js
+SQL

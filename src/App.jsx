@@ -4,7 +4,7 @@ import Logo from "./Components/Logo/Logo";
 import Rank from "./Components/Rank/Rank";
 import ImageLinkForm from "./Components/ImageLinkForm/ImagelinkForm";
 import FaceRecognition from "./Components/FaceRecognition/FaceRecognition";
-import Signin from "./Components/Signin/Sigin";
+import Signin from "./Components/Signin/Signin";
 import Register from "./Components/Register/Register";
 import ParticlesBg from "particles-bg";
 import "./App.css";
@@ -50,6 +50,26 @@ function App() {
   const [box, setBox] = useState([]);
   const [route, setRoute] = useState("signin");
   const [isSignIn, setIsSignIn] = useState(false);
+  const [user, setUser] = useState({
+    id: "",
+    name: "",
+    email: "",
+    entries: 0,
+    joined: "",
+  });
+
+  console.log(user);
+
+  const onUserChange = (user) => {
+    const { id, name, email, entries, joined } = user;
+    setUser({
+      id,
+      name,
+      email,
+      entries,
+      joined,
+    });
+  };
 
   const calculateFaceLocation = (data) => {
     const clarifaiFace = data.outputs[0].data.regions;
@@ -62,7 +82,8 @@ function App() {
         leftCol: element.region_info.bounding_box.left_col * width,
         topRow: element.region_info.bounding_box.top_row * height,
         rightCol: width - element.region_info.bounding_box.right_col * width,
-        bottomRow: height - element.region_info.bounding_box.bottom_row * height,
+        bottomRow:
+          height - element.region_info.bounding_box.bottom_row * height,
       });
     });
     setBox(newBox);
@@ -74,9 +95,27 @@ function App() {
   };
 
   const onButtonSubmit = () => {
-    fetch("https://api.clarifai.com/v2/models/" + "face-detection" + "/outputs", setupClarifai(imageUrl))
+    fetch(
+      "https://api.clarifai.com/v2/models/" + "face-detection" + "/outputs",
+      setupClarifai(imageUrl)
+    )
       .then((response) => response.json())
       .then((result) => {
+        if (result) {
+          fetch("http://localhost:4001/image", {
+            method: "put",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: user.id,
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data > 0) {
+                setUser({ ...user, entries: data });
+              }
+            });
+        }
         calculateFaceLocation(result);
         /*const regions = result.outputs[0].data.regions;
 
@@ -123,28 +162,59 @@ function App() {
   const renderComponents = (currentRoute) => {
     switch (currentRoute) {
       case "signin":
-        return <Signin onRouteChange={onRouteChange} />;
+        return (
+          <Signin
+            onRouteChange={onRouteChange}
+            loadUser={onUserChange}
+          />
+        );
       case "register":
-        return <Register onRouteChange={onRouteChange} />;
+        return (
+          <Register
+            onRouteChange={onRouteChange}
+            loadUser={onUserChange}
+          />
+        );
       case "home":
         return (
           <>
             <Logo />
-            <Rank />
-            <ImageLinkForm onInputChange={onInputChange} onButtonSubmit={onButtonSubmit} />
-            <FaceRecognition box={box} imageUrl={imageUrl} />
+            <Rank
+              name={user.name}
+              entries={user.entries}
+            />
+            <ImageLinkForm
+              onInputChange={onInputChange}
+              onButtonSubmit={onButtonSubmit}
+            />
+            <FaceRecognition
+              box={box}
+              imageUrl={imageUrl}
+            />
           </>
         );
 
       default:
-        return <Signin onRouteChange={onRouteChange} />;
+        return (
+          <Signin
+            onRouteChange={onRouteChange}
+            loadUser={onUserChange}
+          />
+        );
     }
   };
 
   return (
     <>
-      <Navigation onRouteChange={onRouteChange} isSignIn={isSignIn} />
-      <ParticlesBg num={100} type="cobweb" bg={true} />
+      <Navigation
+        onRouteChange={onRouteChange}
+        isSignIn={isSignIn}
+      />
+      <ParticlesBg
+        num={100}
+        type="cobweb"
+        bg={true}
+      />
       {renderComponents(route)}
     </>
   );

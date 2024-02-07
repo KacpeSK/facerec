@@ -6,7 +6,7 @@ const Navigation = ({ onRouteChange, isSignIn }) => {
       <nav className="flex justify-end">
         <a
           onClick={() => {
-            onRouteChange("signin");
+            onRouteChange("signout");
           }}
           className="f3 link dim black underline pa3 pointer"
         >

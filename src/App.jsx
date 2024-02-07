@@ -69,6 +69,19 @@ function App() {
       entries,
       joined,
     });
+    setImageUrl("");
+  };
+
+  const resetState = () => {
+    setImageUrl("");
+    setBox([]);
+    setUser({
+      id: "",
+      name: "",
+      email: "",
+      entries: 0,
+      joined: "",
+    });
   };
 
   const calculateFaceLocation = (data) => {
@@ -114,7 +127,8 @@ function App() {
               if (data > 0) {
                 setUser({ ...user, entries: data });
               }
-            });
+            })
+            .catch(console.log);
         }
         calculateFaceLocation(result);
         /*const regions = result.outputs[0].data.regions;
@@ -150,6 +164,10 @@ function App() {
         break;
       case "home":
         setIsSignIn(true);
+        break;
+      case "signout":
+        setIsSignIn(false);
+        resetState();
         break;
 
       default:
